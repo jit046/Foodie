@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.todo.model.Todo;
-import com.example.todo.model.repository.TodoRepository;
+import com.example.todo.repository.TodoRepository;
 
 import java.util.List;
 import java.util.Optional;
