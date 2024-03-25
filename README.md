@@ -2,7 +2,7 @@
 
 ## Blog Post
 
-This repository contains the source code for a secure RESTful API that leverages Spring Data MongoDB and Microsoft EntraID for authentication and authorization. The step-by-step tutorial for building this project can be found in the MongoDB Developer Center.
+This repository contains the source code for a secure RESTful API that leverages Spring Data MongoDB and Microsoft EntraID for authentication and authorization. The [step-by-step tutorial for building this project](https://www.mongodb.com/products/atlas/secure-api-spring-microsoft-entraid/) can be found in the [MongoDB Developer Center](https://www.mongodb.com/developer/).
 
 ## Supported versions:
 
