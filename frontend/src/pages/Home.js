@@ -1,11 +1,41 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaClock, FaUtensils, FaTruck, FaStar, FaArrowRight } from 'react-icons/fa';
-import TimeWindow from '../components/TimeWindow';
 import './Home.css';
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('BREAKFAST');
+
+  // Function to check if ordering is allowed for a specific meal type
+  const isOrderingAllowed = (mealType) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+
+    switch (mealType) {
+      case 'BREAKFAST':
+        // Order from 9 PM (21:00) to 7:30 AM (7:30)
+        const breakfastStart = 21 * 60; // 9 PM in minutes
+        const breakfastEnd = 7 * 60 + 30; // 7:30 AM in minutes
+        return currentTime >= breakfastStart || currentTime <= breakfastEnd;
+      
+      case 'LUNCH':
+        // Order from 6 AM (6:00) to 10 AM (10:00)
+        const lunchStart = 6 * 60; // 6 AM in minutes
+        const lunchEnd = 10 * 60; // 10 AM in minutes
+        return currentTime >= lunchStart && currentTime <= lunchEnd;
+      
+      case 'DINNER':
+        // Order from 12 PM (12:00) to 5 PM (17:00)
+        const dinnerStart = 12 * 60; // 12 PM in minutes
+        const dinnerEnd = 17 * 60; // 5 PM in minutes
+        return currentTime >= dinnerStart && currentTime <= dinnerEnd;
+      
+      default:
+        return false;
+    }
+  };
 
   const mealTypes = [
     {
@@ -111,7 +141,6 @@ const Home = () => {
                   <FaTruck className="delivery-icon" />
                   <span>Delivered: {meal.deliveryTime}</span>
                 </div>
-                <TimeWindow mealType={meal.type} />
               </div>
             ))}
           </div>
@@ -190,17 +219,26 @@ const Home = () => {
             </div>
             
             <div className="menu-items">
-              {menuItems[selectedCategory].map((item, index) => (
-                <div key={index} className="menu-item">
-                  <div className="menu-item-info">
-                    <h4 className="menu-item-name">{item.name}</h4>
+              {menuItems[selectedCategory].map((item, index) => {
+                const orderingAllowed = isOrderingAllowed(selectedCategory);
+                return (
+                  <div key={index} className="menu-item">
+                    <div className="menu-item-info">
+                      <h4 className="menu-item-name">{item.name}</h4>
+                    </div>
+                    <div className="menu-item-price">
+                      <span className="price">₹{item.price}</span>
+                      <button 
+                        className={`add-to-cart-btn ${!orderingAllowed ? 'disabled' : ''}`}
+                        disabled={!orderingAllowed}
+                        title={!orderingAllowed ? `Ordering closed for ${selectedCategory.toLowerCase()}` : 'Add to cart'}
+                      >
+                        {orderingAllowed ? 'Add to Cart' : 'Ordering Closed'}
+                      </button>
+                    </div>
                   </div>
-                  <div className="menu-item-price">
-                    <span className="price">₹{item.price}</span>
-                    <button className="add-to-cart-btn">Add to Cart</button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

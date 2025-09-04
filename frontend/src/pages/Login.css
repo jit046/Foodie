@@ -127,6 +127,12 @@
   transform: translateY(-1px);
 }
 
+.login-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.3);
+  background: #e55a2b;
+}
+
 .login-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
