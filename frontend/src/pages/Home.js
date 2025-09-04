@@ -1,43 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaClock, FaUtensils, FaTruck, FaStar, FaArrowRight } from 'react-icons/fa';
-import axios from 'axios';
 import TimeWindow from '../components/TimeWindow';
-import RestaurantCard from '../components/RestaurantCard';
-import LoadingSpinner from '../components/LoadingSpinner';
 import './Home.css';
 
 const Home = () => {
-  const [timeWindows, setTimeWindows] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchTimeWindows();
-    fetchRestaurants();
-  }, []);
-
-  const fetchTimeWindows = async () => {
-    try {
-      const response = await axios.get('/api/restaurants/ordering-windows');
-      setTimeWindows(response.data);
-    } catch (error) {
-      console.error('Error fetching time windows:', error);
-    }
-  };
-
-  const fetchRestaurants = async () => {
-    try {
-      const response = await axios.get('/api/restaurants');
-      setRestaurants(response.data.slice(0, 6)); // Show only first 6 restaurants
-    } catch (error) {
-      setError('Failed to load restaurants');
-      console.error('Error fetching restaurants:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedCategory, setSelectedCategory] = useState('BREAKFAST');
 
   const mealTypes = [
     {
@@ -66,9 +34,35 @@ const Home = () => {
     }
   ];
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  const menuItems = {
+    BREAKFAST: [
+      { name: 'Idli with Sambar (2 pcs)', price: 24 },
+      { name: 'Masala Dosa', price: 35 },
+      { name: 'Poha', price: 20 },
+      { name: 'Aloo Paratha (with curd)', price: 30 },
+      { name: 'Bread Omelette', price: 25 },
+      { name: 'Tea', price: 10 },
+      { name: 'Filter Coffee', price: 15 }
+    ],
+    LUNCH: [
+      { name: 'Veg Thali', price: 60 },
+      { name: 'Chicken Biryani', price: 120 },
+      { name: 'Paneer Butter Masala + Roti', price: 80 },
+      { name: 'Dal Tadka + Rice', price: 50 },
+      { name: 'Rajma Chawal', price: 45 },
+      { name: 'Curd', price: 10 },
+      { name: 'Butter Roti (1 pc)', price: 8 }
+    ],
+    DINNER: [
+      { name: 'Chapati (2 pcs) + Sabzi', price: 35 },
+      { name: 'Egg Curry + Rice', price: 70 },
+      { name: 'Chicken Curry + Roti (2 pcs)', price: 110 },
+      { name: 'Veg Pulao', price: 40 },
+      { name: 'Mix Veg + Paratha', price: 50 },
+      { name: 'Gulab Jamun (2 pcs)', price: 20 },
+      { name: 'Buttermilk', price: 12 }
+    ]
+  };
 
   return (
     <div className="home">
@@ -84,13 +78,13 @@ const Home = () => {
               Fresh food delivered exactly when you need it.
             </p>
             <div className="hero-actions">
-              <Link to="/restaurants" className="btn btn-primary btn-lg">
-                <FaUtensils className="btn-icon" />
-                Browse Restaurants
-              </Link>
-              <Link to="/orders" className="btn btn-outline btn-lg">
+              <Link to="/orders" className="btn btn-primary btn-lg">
                 <FaClock className="btn-icon" />
                 View Orders
+              </Link>
+              <Link to="/register" className="btn btn-outline btn-lg">
+                <FaUtensils className="btn-icon" />
+                Create Account
               </Link>
             </div>
           </div>
@@ -162,31 +156,53 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Restaurants Section */}
-      <section className="restaurants-section">
+      {/* Food Categories Section */}
+      <section className="food-categories-section">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Featured Restaurants</h2>
-            <Link to="/restaurants" className="view-all-link">
-              View All Restaurants
-              <FaArrowRight className="arrow-icon" />
-            </Link>
-          </div>
+          <h2 className="section-title">Choose Your Meal</h2>
+          <p className="section-description">
+            Select a category to view available items and prices
+          </p>
           
-          {error ? (
-            <div className="error-message">
-              <p>{error}</p>
-              <button onClick={fetchRestaurants} className="btn btn-primary">
-                Try Again
+          <div className="category-buttons">
+            {mealTypes.map((meal) => (
+              <button
+                key={meal.type}
+                className={`category-btn ${selectedCategory === meal.type ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(meal.type)}
+                style={{ backgroundColor: selectedCategory === meal.type ? meal.color : '#f3f4f6' }}
+              >
+                <span className="category-icon">{meal.icon}</span>
+                <span className="category-title">{meal.title}</span>
               </button>
+            ))}
+          </div>
+
+          <div className="menu-section">
+            <div className="menu-header">
+              <h3 className="menu-title">
+                {mealTypes.find(meal => meal.type === selectedCategory)?.title} Menu
+              </h3>
+              <div className="delivery-info">
+                <FaTruck className="delivery-icon" />
+                <span>Delivered: {mealTypes.find(meal => meal.type === selectedCategory)?.deliveryTime}</span>
+              </div>
             </div>
-          ) : (
-            <div className="restaurants-grid">
-              {restaurants.map((restaurant) => (
-                <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            
+            <div className="menu-items">
+              {menuItems[selectedCategory].map((item, index) => (
+                <div key={index} className="menu-item">
+                  <div className="menu-item-info">
+                    <h4 className="menu-item-name">{item.name}</h4>
+                  </div>
+                  <div className="menu-item-price">
+                    <span className="price">₹{item.price}</span>
+                    <button className="add-to-cart-btn">Add to Cart</button>
+                  </div>
+                </div>
               ))}
             </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -199,9 +215,9 @@ const Home = () => {
               Join thousands of satisfied customers who trust FoodieTime for their meal delivery needs.
             </p>
             <div className="cta-actions">
-              <Link to="/restaurants" className="btn btn-primary btn-lg">
+              <button className="btn btn-primary btn-lg" onClick={() => setSelectedCategory('BREAKFAST')}>
                 Start Ordering
-              </Link>
+              </button>
               <Link to="/register" className="btn btn-outline btn-lg">
                 Create Account
               </Link>
