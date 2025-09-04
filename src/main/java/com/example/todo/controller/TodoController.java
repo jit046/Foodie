@@ -1,7 +1,7 @@
 package com.example.todo.controller;
 
 import com.example.todo.model.Todo;
-import com.example.todo.sevice.TodoService;
+import com.example.todo.service.TodoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,29 +18,31 @@ public class TodoController {
     private TodoService todoService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Todo> getAllTodos() {
         return todoService.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Todo getTodoById(@PathVariable String id) {
         return todoService.findById(id).orElse(null);
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('SCOPE_Todo.User')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Todo createTodo(@RequestBody Todo todo, Authentication authentication) {
         return todoService.save(todo);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_Todo.User')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Todo updateTodo(@PathVariable String id, @RequestBody Todo todo) {
         return todoService.save(todo);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_Todo.Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTodo(@PathVariable String id) {
         todoService.deleteById(id);
     }

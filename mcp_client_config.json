@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "todo-monitoring": {
+      "command": "python",
+      "args": ["mcp_server/todo_monitoring_server.py"],
+      "env": {
+        "PYTHONPATH": "./mcp_server"
+      }
+    },
+    "web-search": {
+      "command": "python",
+      "args": ["mcp_server/web_search_server.py"],
+      "env": {
+        "PYTHONPATH": "./mcp_server"
+      }
+    },
+    "database-management": {
+      "command": "python",
+      "args": ["mcp_server/database_management_server.py"],
+      "env": {
+        "PYTHONPATH": "./mcp_server"
+      }
+    }
+  }
+}

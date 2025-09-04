@@ -1,0 +1,290 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  height: 70px;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ff6b35;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navbar-logo:hover {
+  color: #e55a2b;
+}
+
+.logo-icon {
+  font-size: 28px;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding: 8px 0;
+}
+
+.navbar-link:hover {
+  color: #ff6b35;
+}
+
+.link-icon {
+  font-size: 16px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cart-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.cart-link:hover {
+  background-color: #f9fafb;
+  color: #ff6b35;
+}
+
+.cart-icon {
+  font-size: 18px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -2px;
+  right: 8px;
+  background-color: #ff6b35;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #374151;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-button:hover {
+  background-color: #f9fafb;
+  color: #ff6b35;
+}
+
+.user-icon {
+  font-size: 16px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  z-index: 1001;
+  display: none;
+}
+
+.user-menu:hover .user-dropdown {
+  display: block;
+}
+
+.dropdown-link {
+  display: block;
+  padding: 12px 16px;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-link:hover {
+  background-color: #f9fafb;
+  color: #ff6b35;
+}
+
+.dropdown-link.logout {
+  color: #dc2626;
+}
+
+.dropdown-link.logout:hover {
+  background-color: #fee2e2;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #374151;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+.mobile-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-link:hover {
+  background-color: #f9fafb;
+  color: #ff6b35;
+}
+
+.mobile-link.logout {
+  color: #dc2626;
+}
+
+.mobile-link.logout:hover {
+  background-color: #fee2e2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-menu {
+    display: none;
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .mobile-menu {
+    display: block;
+  }
+  
+  .user-dropdown {
+    display: none !important;
+  }
+  
+  .user-button {
+    padding: 8px;
+  }
+  
+  .auth-buttons {
+    gap: 8px;
+  }
+  
+  .auth-buttons .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0 16px;
+  }
+  
+  .navbar-logo {
+    font-size: 20px;
+  }
+  
+  .logo-icon {
+    font-size: 24px;
+  }
+  
+  .cart-link {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .auth-buttons .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,251 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+
+const OrderContext = createContext();
+
+export const useOrder = () => {
+  const context = useContext(OrderContext);
+  if (!context) {
+    throw new Error('useOrder must be used within an OrderProvider');
+  }
+  return context;
+};
+
+export const OrderProvider = ({ children }) => {
+  const [cart, setCart] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (menuItem, quantity = 1, customizations = []) => {
+    const cartItem = {
+      id: `${menuItem.id}_${Date.now()}`,
+      menuItemId: menuItem.id,
+      name: menuItem.name,
+      price: menuItem.price,
+      quantity,
+      customizations,
+      restaurantId: menuItem.restaurantId,
+      restaurantName: menuItem.restaurantName || 'Unknown Restaurant'
+    };
+
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => 
+        item.menuItemId === cartItem.menuItemId && 
+        JSON.stringify(item.customizations) === JSON.stringify(customizations)
+      );
+
+      if (existingItem) {
+        return prevCart.map(item =>
+          item.id === existingItem.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prevCart, cartItem];
+      }
+    });
+  };
+
+  const removeFromCart = (itemId) => {
+    setCart(prevCart => prevCart.filter(item => item.id !== itemId));
+  };
+
+  const updateCartItemQuantity = (itemId, quantity) => {
+    if (quantity <= 0) {
+      removeFromCart(itemId);
+      return;
+    }
+
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.id === itemId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => {
+      const itemTotal = item.price * item.quantity;
+      const customizationTotal = item.customizations.reduce(
+        (sum, customization) => sum + (customization.additionalPrice || 0),
+        0
+      );
+      return total + (itemTotal + customizationTotal);
+    }, 0);
+  };
+
+  const getCartItemCount = () => {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const createOrder = async (orderData) => {
+    setLoading(true);
+    try {
+      const orderPayload = {
+        ...orderData,
+        items: cart.map(item => ({
+          menuItemId: item.menuItemId,
+          menuItemName: item.name,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          customizations: item.customizations
+        }))
+      };
+
+      const response = await axios.post('/api/orders', orderPayload);
+      const newOrder = response.data;
+      
+      setCurrentOrder(newOrder);
+      setOrderHistory(prev => [newOrder, ...prev]);
+      clearCart();
+      
+      return { success: true, order: newOrder };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Order creation failed' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getOrderById = async (orderId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/orders/${orderId}`);
+      return { success: true, order: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to fetch order' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserOrders = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/orders/user/${userId}`);
+      setOrderHistory(response.data);
+      return { success: true, orders: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to fetch orders' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(`/api/orders/${orderId}/status`, null, {
+        params: { status }
+      });
+      
+      // Update order in history if it exists
+      setOrderHistory(prev =>
+        prev.map(order =>
+          order.id === orderId ? response.data : order
+        )
+      );
+      
+      return { success: true, order: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to update order status' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelOrder = async (orderId, reason) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(`/api/orders/${orderId}/cancel`, null, {
+        params: { reason }
+      });
+      
+      // Update order in history
+      setOrderHistory(prev =>
+        prev.map(order =>
+          order.id === orderId ? response.data : order
+        )
+      );
+      
+      return { success: true, order: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to cancel order' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getOrderStats = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/orders/user/${userId}/stats`);
+      return { success: true, stats: response.data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Failed to fetch order stats' 
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = {
+    cart,
+    currentOrder,
+    orderHistory,
+    loading,
+    addToCart,
+    removeFromCart,
+    updateCartItemQuantity,
+    clearCart,
+    getCartTotal,
+    getCartItemCount,
+    createOrder,
+    getOrderById,
+    getUserOrders,
+    updateOrderStatus,
+    cancelOrder,
+    getOrderStats
+  };
+
+  return (
+    <OrderContext.Provider value={value}>
+      {children}
+    </OrderContext.Provider>
+  );
+};

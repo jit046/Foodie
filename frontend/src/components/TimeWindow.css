@@ -1,0 +1,102 @@
+.time-window {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.time-window.open {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+}
+
+.time-window.closed {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2, #fef7f7);
+}
+
+.time-window.loading {
+  border-color: #6b7280;
+  background: #f9fafb;
+}
+
+.time-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.time-icon {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.time-window.open .time-icon {
+  color: #10b981;
+}
+
+.time-window.closed .time-icon {
+  color: #ef4444;
+}
+
+.time-window-status {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+}
+
+.time-window.open .time-window-status {
+  color: #059669;
+}
+
+.time-window.closed .time-window-status {
+  color: #dc2626;
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.status-icon.open {
+  color: #10b981;
+}
+
+.status-icon.closed {
+  color: #ef4444;
+}
+
+.time-remaining {
+  font-size: 12px;
+  color: #059669;
+  font-weight: 500;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.next-window-info {
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #6b7280;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
