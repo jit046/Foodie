@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FaEye, FaEyeSlash, FaUser, FaLock, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import './Register.css';
 
@@ -74,7 +74,6 @@ const Register = () => {
               <div className="form-group">
                 <label htmlFor="firstName" className="form-label">First Name</label>
                 <div className="input-group">
-                  <FaUser className="input-icon" />
                   <input
                     type="text"
                     id="firstName"
@@ -91,7 +90,6 @@ const Register = () => {
               <div className="form-group">
                 <label htmlFor="lastName" className="form-label">Last Name</label>
                 <div className="input-group">
-                  <FaUser className="input-icon" />
                   <input
                     type="text"
                     id="lastName"
@@ -109,7 +107,6 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email</label>
               <div className="input-group">
-                <FaEnvelope className="input-icon" />
                 <input
                   type="email"
                   id="email"
@@ -126,7 +123,6 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
               <div className="input-group">
-                <FaPhone className="input-icon" />
                 <input
                   type="tel"
                   id="phoneNumber"
@@ -143,7 +139,6 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="password" className="form-label">Password</label>
               <div className="input-group">
-                <FaLock className="input-icon" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
@@ -167,7 +162,6 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
               <div className="input-group">
-                <FaLock className="input-icon" />
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"

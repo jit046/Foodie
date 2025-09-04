@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import './Login.css';
 
@@ -55,7 +55,6 @@ const Login = () => {
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email</label>
               <div className="input-group">
-                <FaUser className="input-icon" />
                 <input
                   type="email"
                   id="email"
@@ -72,7 +71,6 @@ const Login = () => {
             <div className="form-group">
               <label htmlFor="password" className="form-label">Password</label>
               <div className="input-group">
-                <FaLock className="input-icon" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
