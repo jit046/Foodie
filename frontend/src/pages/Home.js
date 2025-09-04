@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaClock, FaUtensils, FaTruck, FaStar, FaArrowRight } from 'react-icons/fa';
+import { FaClock, FaUtensils, FaTruck } from 'react-icons/fa';
 import './Home.css';
 
 const Home = () => {
@@ -171,16 +171,6 @@ const Home = () => {
                 Get your food delivered within the promised time window, every time.
               </p>
             </div>
-            
-            <div className="feature-card">
-              <div className="feature-icon">
-                <FaStar />
-              </div>
-              <h3 className="feature-title">Quality Restaurants</h3>
-              <p className="feature-description">
-                Choose from top-rated restaurants with verified quality and hygiene standards.
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -212,6 +202,10 @@ const Home = () => {
               <h3 className="menu-title">
                 {mealTypes.find(meal => meal.type === selectedCategory)?.title} Menu
               </h3>
+              <div className="delivery-info">
+                <FaClock className="delivery-icon" />
+                <span>Order: {mealTypes.find(meal => meal.type === selectedCategory)?.description}</span>
+              </div>
               <div className="delivery-info">
                 <FaTruck className="delivery-icon" />
                 <span>Delivered: {mealTypes.find(meal => meal.type === selectedCategory)?.deliveryTime}</span>
