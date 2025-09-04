@@ -25,15 +25,8 @@ public class WebConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/api/monitoring/**").permitAll() // Allow monitoring endpoints for MCP access
-                .requestMatchers("/actuator/**").permitAll() // Allow actuator endpoints for monitoring
-                .requestMatchers("/api/todos").hasAnyRole("USER", "ADMIN") // GET todos requires USER or ADMIN role
-                .requestMatchers("/api/todos/**").hasRole("ADMIN") // POST, PUT, DELETE require ADMIN role
-                .anyRequest().authenticated()
-            )
-            .userDetailsService(customUserDetailsService) // Configure custom UserDetailsService
-            .httpBasic(); // Enable basic authentication for simplicity
+                .anyRequest().permitAll() // Allow all requests without authentication
+            );
         return http.build();
     }
     //This part will encrypt the password

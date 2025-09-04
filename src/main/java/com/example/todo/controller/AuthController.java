@@ -4,7 +4,6 @@ import com.example.todo.model.User;
 import com.example.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +19,12 @@ public class AuthController {
     private UserService userService;
 
     @GetMapping("/profile")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> getUserProfile(Authentication authentication) {
-        return ResponseEntity.ok("Hello " + authentication.getName() + 
-                "! Your roles: " + authentication.getAuthorities());
+        return ResponseEntity.ok("Hello " + (authentication != null ? authentication.getName() : "Guest") + 
+                "! Your roles: " + (authentication != null ? authentication.getAuthorities() : "None"));
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registerUser(@RequestBody Map<String, Object> request) {
         try {
             String username = (String) request.get("username");

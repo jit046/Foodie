@@ -4,7 +4,6 @@ import com.example.todo.model.Todo;
 import com.example.todo.service.TodoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -18,31 +17,26 @@ public class TodoController {
     private TodoService todoService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Todo> getAllTodos() {
         return todoService.findAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Todo getTodoById(@PathVariable String id) {
         return todoService.findById(id).orElse(null);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public Todo createTodo(@RequestBody Todo todo, Authentication authentication) {
         return todoService.save(todo);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public Todo updateTodo(@PathVariable String id, @RequestBody Todo todo) {
         return todoService.save(todo);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTodo(@PathVariable String id) {
         todoService.deleteById(id);
     }
