@@ -112,7 +112,7 @@ const Home = () => {
                 <FaClock className="btn-icon" />
                 View Orders
               </Link>
-              <Link to="/register" className="btn btn-outline btn-lg">
+              <Link to="/register" className="btn btn-primary btn-lg">
                 <FaUtensils className="btn-icon" />
                 Create Account
               </Link>
@@ -256,7 +256,7 @@ const Home = () => {
               <button className="btn btn-primary btn-lg" onClick={() => setSelectedCategory('BREAKFAST')}>
                 Start Ordering
               </button>
-              <Link to="/register" className="btn btn-outline btn-lg">
+              <Link to="/register" className="btn btn-primary btn-lg">
                 Create Account
               </Link>
             </div>
