@@ -375,3 +375,24 @@
     font-size: 16px;
   }
 }
+
+/* Free delivery styling */
+.free-delivery {
+  color: #10b981 !important;
+  font-weight: 600;
+}
+
+.free-delivery-message {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.free-delivery-text {
+  color: #92400e;
+  font-weight: 600;
+  font-size: 14px;
+}

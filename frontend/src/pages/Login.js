@@ -9,9 +9,10 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,18 +26,22 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await login(formData.username, formData.password);
       
       if (result.success) {
         toast.success('Login successful!');
         navigate('/');
       } else {
+        setError(result.error);
         toast.error(result.error);
       }
     } catch (error) {
-      toast.error('An error occurred during login');
+      const errorMessage = 'An error occurred during login';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -52,17 +57,23 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+            
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email</label>
+              <label htmlFor="username" className="form-label">Username</label>
               <div className="input-group">
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
                   className="form-input"
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   required
                 />
               </div>

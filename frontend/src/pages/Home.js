@@ -1,10 +1,48 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaClock, FaUtensils, FaTruck } from 'react-icons/fa';
+import { FaClock, FaUtensils, FaTruck, FaShoppingCart } from 'react-icons/fa';
+import { useOrder } from '../contexts/OrderContext';
 import './Home.css';
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('BREAKFAST');
+  const [showCartNotification, setShowCartNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [isFreeDelivery, setIsFreeDelivery] = useState(false);
+  const { addToCart, getCartItemCount, getCartTotal } = useOrder();
+  
+  // Free delivery threshold
+  const FREE_DELIVERY_THRESHOLD = 200;
+
+  // Function to handle adding item to cart
+  const handleAddToCart = (item) => {
+    const menuItem = {
+      id: `${selectedCategory}_${item.name.replace(/\s+/g, '_').toLowerCase()}`,
+      name: item.name,
+      price: item.price,
+      restaurantId: 'foodie_restaurant',
+      restaurantName: 'Foodie Restaurant'
+    };
+    
+    addToCart(menuItem);
+    
+    // Calculate notification message for free delivery
+    setTimeout(() => {
+      const currentTotal = getCartTotal();
+      const remainingAmount = FREE_DELIVERY_THRESHOLD - currentTotal;
+      
+      if (remainingAmount > 0) {
+        setNotificationMessage(`Add ₹${remainingAmount} more for free delivery!`);
+        setIsFreeDelivery(false);
+      } else {
+        setNotificationMessage('🎉 You qualify for free delivery!');
+        setIsFreeDelivery(true);
+      }
+      
+      setShowCartNotification(true);
+      setTimeout(() => setShowCartNotification(false), 4000);
+    }, 100);
+  };
 
   // Function to check if ordering is allowed for a specific meal type
   const isOrderingAllowed = (mealType) => {
@@ -96,6 +134,17 @@ const Home = () => {
 
   return (
     <div className="home">
+      {/* Cart Notification */}
+      {showCartNotification && (
+        <div className={`cart-notification ${isFreeDelivery ? 'free-delivery' : ''}`}>
+          <FaShoppingCart className="cart-icon" />
+          <div className="notification-content">
+            <div className="notification-main">Item added to cart! ({getCartItemCount()} items)</div>
+            <div className="notification-sub">{notificationMessage}</div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="hero">
         <div className="container">
@@ -225,6 +274,7 @@ const Home = () => {
                       <button 
                         className={`add-to-cart-btn ${!orderingAllowed ? 'disabled' : ''}`}
                         disabled={!orderingAllowed}
+                        onClick={() => orderingAllowed && handleAddToCart(item)}
                         title={!orderingAllowed ? `Ordering closed for ${selectedCategory.toLowerCase()}` : 'Add to cart'}
                       >
                         {orderingAllowed ? 'Add to Cart' : 'Ordering Closed'}

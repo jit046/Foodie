@@ -321,6 +321,80 @@
   background: #9ca3af;
 }
 
+/* Cart Notification */
+.cart-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 300px;
+  border-left: 4px solid #059669;
+}
+
+.cart-icon {
+  font-size: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-main {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.notification-sub {
+  font-size: 13px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Free delivery notification style */
+.cart-notification.free-delivery {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-left-color: #b45309;
+  animation: slideInRight 0.3s ease-out, pulse 2s infinite;
+}
+
+.cart-notification.free-delivery .notification-sub {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Restaurants Section */
 .restaurants-section {
   padding: 80px 0;

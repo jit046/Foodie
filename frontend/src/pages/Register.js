@@ -11,11 +11,13 @@ const Register = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
     email: '',
     phoneNumber: '',
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,8 +31,10 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     
     if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       toast.error('Passwords do not match');
       return;
     }
@@ -41,20 +45,23 @@ const Register = () => {
       const result = await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
+        username: formData.username,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
-        password: formData.password,
-        username: formData.email // Using email as username
+        password: formData.password
       });
       
       if (result.success) {
         toast.success('Registration successful!');
         navigate('/');
       } else {
+        setError(result.error);
         toast.error(result.error);
       }
     } catch (error) {
-      toast.error('An error occurred during registration');
+      const errorMessage = 'An error occurred during registration';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -70,6 +77,12 @@ const Register = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="register-form">
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+            
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="firstName" className="form-label">First Name</label>
@@ -101,6 +114,22 @@ const Register = () => {
                     required
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="username" className="form-label">Username</label>
+              <div className="input-group">
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Enter username"
+                  required
+                />
               </div>
             </div>
 

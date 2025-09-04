@@ -68,7 +68,8 @@ const Cart = () => {
   };
 
   const subtotal = getCartTotal();
-  const deliveryFee = 30; // Fixed delivery fee
+  const FREE_DELIVERY_THRESHOLD = 200;
+  const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 30; // Free delivery for orders ₹200+
   const tax = subtotal * 0.05; // 5% tax
   const total = subtotal + deliveryFee + tax;
 
@@ -175,8 +176,18 @@ const Cart = () => {
             
             <div className="summary-row">
               <span>Delivery Fee</span>
-              <span>₹{deliveryFee.toFixed(2)}</span>
+              <span className={deliveryFee === 0 ? 'free-delivery' : ''}>
+                {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee.toFixed(2)}`}
+              </span>
             </div>
+            
+            {deliveryFee > 0 && (
+              <div className="free-delivery-message">
+                <span className="free-delivery-text">
+                  Add ₹{(FREE_DELIVERY_THRESHOLD - subtotal).toFixed(0)} more for free delivery!
+                </span>
+              </div>
+            )}
             
             <div className="summary-row">
               <span>Tax (5%)</span>
