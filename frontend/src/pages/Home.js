@@ -105,7 +105,7 @@ const Home = () => {
             </h1>
             <p className="hero-description">
               Experience time-based food delivery with specific ordering windows for breakfast, lunch, and dinner. 
-              Fresh food delivered exactly when you need it.
+              We cook when you order because we believe in fresh food.
             </p>
             <div className="hero-actions">
               <Link to="/orders" className="btn btn-primary btn-lg">
