@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import './Cart.css';
 
 const Cart = () => {
-  const { cart, updateCartItemQuantity, removeFromCart, getCartTotal, createOrder, loading } = useOrder();
+  const { cart, updateCartItemQuantity, removeFromCart, getCartTotal, createOrder, loading, orderHistory, setOrderHistory, clearCart } = useOrder();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -22,12 +22,6 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    if (!user) {
-      toast.error('Please login to continue');
-      navigate('/login');
-      return;
-    }
-
     if (cart.length === 0) {
       toast.error('Your cart is empty');
       return;
@@ -35,30 +29,51 @@ const Cart = () => {
 
     setIsCheckingOut(true);
     try {
-      // For demo purposes, we'll create a simple order
+      // Create order data
       const orderData = {
-        userId: user.id,
-        restaurantId: cart[0].restaurantId, // Assuming all items are from the same restaurant
-        mealType: 'LUNCH', // Default meal type, should be selected by user
+        userId: 'guest_user', // Since we removed auth, use guest user
+        restaurantId: cart[0].restaurantId,
+        restaurantName: cart[0].restaurantName,
+        mealType: 'LUNCH', // Default meal type
         paymentMethod: 'CASH',
+        status: 'PENDING',
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        tax: tax,
+        total: total,
         deliveryAddress: {
           street: '123 Main Street',
           city: 'Your City',
           state: 'Your State',
           pincode: '12345',
-          contactNumber: user.phoneNumber || '1234567890',
-          contactName: user.firstName || user.username
-        }
+          contactNumber: '1234567890',
+          contactName: 'Guest User'
+        },
+        items: cart.map(item => ({
+          menuItemId: item.menuItemId,
+          menuItemName: item.name,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          customizations: item.customizations || []
+        }))
       };
 
-      const result = await createOrder(orderData);
+      // Create order locally (since we don't have backend order creation)
+      const newOrder = {
+        id: `ORDER_${Date.now()}`,
+        ...orderData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Add to order history
+      setOrderHistory(prev => [newOrder, ...prev]);
       
-      if (result.success) {
-        toast.success('Order placed successfully!');
-        navigate(`/orders/${result.order.id}`);
-      } else {
-        toast.error(result.error || 'Failed to place order');
-      }
+      // Clear cart
+      clearCart();
+      
+      toast.success('Order placed successfully!');
+      navigate('/orders');
     } catch (error) {
       toast.error('An error occurred while placing the order');
       console.error('Checkout error:', error);

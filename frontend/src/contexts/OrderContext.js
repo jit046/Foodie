@@ -17,11 +17,16 @@ export const OrderProvider = ({ children }) => {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Load cart from localStorage on mount
+  // Load cart and order history from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
+    }
+    
+    const savedOrderHistory = localStorage.getItem('orderHistory');
+    if (savedOrderHistory) {
+      setOrderHistory(JSON.parse(savedOrderHistory));
     }
   }, []);
 
@@ -29,6 +34,11 @@ export const OrderProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
+
+  // Save order history to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+  }, [orderHistory]);
 
   const addToCart = (menuItem, quantity = 1, customizations = []) => {
     const cartItem = {
@@ -228,6 +238,7 @@ export const OrderProvider = ({ children }) => {
     cart,
     currentOrder,
     orderHistory,
+    setOrderHistory,
     loading,
     addToCart,
     removeFromCart,

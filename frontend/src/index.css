@@ -56,6 +56,11 @@ code {
   text-align: center;
 }
 
+.btn-icon {
+  margin-right: 8px;
+  font-size: 24px;
+}
+
 .btn-primary {
   background-color: #ff6b35;
   color: white;
@@ -99,8 +104,8 @@ code {
 }
 
 .btn-lg {
-  padding: 16px 32px;
-  font-size: 16px;
+  padding: 20px 40px;
+  font-size: 18px;
 }
 
 .card {

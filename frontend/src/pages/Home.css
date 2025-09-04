@@ -20,6 +20,43 @@
   font-weight: 700;
   margin-bottom: 24px;
   line-height: 1.2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  animation: titleBlink 2s infinite;
+}
+
+.animated-word {
+  display: inline-block;
+  opacity: 0;
+  animation: wordAppear 0.8s ease-in-out forwards;
+}
+
+@keyframes wordAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes titleBlink {
+  0%, 50%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%, 75% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 .hero-description {
@@ -36,8 +73,65 @@
   flex-wrap: wrap;
 }
 
+.hero-actions .btn {
+  padding: 24px 48px;
+  font-size: 20px;
+  font-weight: 600;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .btn-icon {
   margin-right: 8px;
+  font-size: 24px;
+}
+
+/* Start Ordering Button with Blinking Animation */
+.start-ordering-btn {
+  animation: blink 2s infinite;
+  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.start-ordering-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shine 3s infinite;
+}
+
+.start-ordering-btn:hover {
+  animation: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+}
+
+@keyframes blink {
+  0%, 50%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%, 75% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 /* Time Windows Section */
@@ -84,6 +178,26 @@
 .meal-type-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+}
+
+.meal-type-card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.click-hint {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.meal-type-card:hover .click-hint {
+  opacity: 1;
+  color: #374151;
 }
 
 .meal-type-icon {
@@ -207,6 +321,18 @@
 .category-btn.active {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  animation: selectedMealBlink 2s infinite;
+}
+
+@keyframes selectedMealBlink {
+  0%, 50%, 100% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+  25%, 75% {
+    opacity: 0.8;
+    transform: translateY(-2px) scale(1.05);
+  }
 }
 
 .category-icon {
@@ -251,6 +377,207 @@
   font-weight: 500;
 }
 
+/* Countdown Timer */
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  animation: pulse 2s infinite;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.countdown-icon {
+  color: #d97706;
+  font-size: 20px;
+  animation: bounce 1s infinite;
+}
+
+.countdown-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.countdown-text {
+  color: #92400e;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.countdown-time {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.time-unit {
+  background: #d97706;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 50px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Order Within Timer */
+.order-within-timer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 2px solid #10b981;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  animation: orderWithinPulse 2s infinite;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.order-within-icon {
+  color: white;
+  font-size: 20px;
+  animation: orderWithinBounce 1s infinite;
+}
+
+.order-within-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-within-text {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-within-time {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.order-within-time .time-unit {
+  background: white;
+  color: #10b981;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 50px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes orderWithinPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+  }
+}
+
+@keyframes orderWithinBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Slot Open Indicator */
+.slot-open-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 12px;
+  animation: slotOpenPulse 2s infinite;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.arrow-icon {
+  color: white;
+  font-size: 24px;
+  animation: arrowBounce 1.5s infinite;
+}
+
+.arrow-text {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes slotOpenPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
 .menu-items {
   display: flex;
   flex-direction: column;
@@ -259,12 +586,12 @@
 
 .menu-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 20px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   transition: all 0.2s ease;
+  gap: 16px;
 }
 
 .menu-item:hover {
@@ -272,8 +599,29 @@
   box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
 }
 
+.menu-item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.food-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.food-image:hover {
+  transform: scale(1.05);
+}
+
 .menu-item-info {
   flex: 1;
+  min-width: 0;
 }
 
 .menu-item-name {
@@ -321,6 +669,50 @@
   background: #9ca3af;
 }
 
+/* Quantity Controls */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: #ff6b35;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+  background: #e55a2b;
+  transform: scale(1.05);
+}
+
+.quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.quantity-display {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+}
+
 /* Cart Notification */
 .cart-notification {
   position: fixed;
@@ -334,7 +726,7 @@
   align-items: flex-start;
   gap: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  z-index: 9999;
   animation: slideInRight 0.3s ease-out;
   max-width: 300px;
   border-left: 4px solid #059669;
@@ -361,6 +753,35 @@
   font-size: 13px;
   opacity: 0.9;
   font-weight: 500;
+}
+
+.notification-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.notification-close:active {
+  transform: scale(0.95);
 }
 
 /* Free delivery notification style */
@@ -485,6 +906,16 @@
   flex-wrap: wrap;
 }
 
+.cta-actions .btn {
+  padding: 24px 48px;
+  font-size: 20px;
+  font-weight: 600;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero {
@@ -552,6 +983,12 @@
     align-items: flex-start;
     gap: 16px;
   }
+
+  .menu-item-image {
+    width: 100%;
+    height: 120px;
+    align-self: center;
+  }
   
   .menu-item-price {
     width: 100%;
@@ -578,6 +1015,15 @@
   .cta-actions {
     flex-direction: column;
     align-items: center;
+  }
+
+  /* Cart notification responsive positioning */
+  .cart-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    margin: 0;
   }
 }
 

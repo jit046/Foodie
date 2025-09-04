@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
       const data = response.data;
       
       if (data.success) {
-        // For now, we'll just store the user data without token since we removed auth
-        setUser(data.user);
+        // Set user data after successful login
+        setUser(data.user || { username, email: data.user?.email });
         return { success: true };
       } else {
         return { 
@@ -57,7 +57,8 @@ export const AuthProvider = ({ children }) => {
       const data = response.data;
       
       if (data.success) {
-        // For now, we'll just return success without storing user data since we removed auth
+        // Set user data after successful registration to show "Start Ordering" button
+        setUser({ username: userData.username, email: userData.email });
         return { success: true };
       } else {
         return { 

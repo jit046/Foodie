@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaClock, FaUtensils, FaTruck, FaShoppingCart } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaClock, FaUtensils, FaTruck, FaShoppingCart, FaChevronDown } from 'react-icons/fa';
 import { useOrder } from '../contexts/OrderContext';
+import { useAuth } from '../contexts/AuthContext';
+import LoginPopup from '../components/LoginPopup';
 import './Home.css';
 
 const Home = () => {
@@ -9,13 +11,275 @@ const Home = () => {
   const [showCartNotification, setShowCartNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
   const [isFreeDelivery, setIsFreeDelivery] = useState(false);
-  const { addToCart, getCartItemCount, getCartTotal } = useOrder();
+  const [itemQuantities, setItemQuantities] = useState({});
+  const [countdownTimers, setCountdownTimers] = useState({});
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const { addToCart, removeFromCart, updateCartItemQuantity, getCartItemCount, getCartTotal, cart } = useOrder();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Free delivery threshold
   const FREE_DELIVERY_THRESHOLD = 200;
 
+  // Function to handle start ordering
+  const handleStartOrdering = () => {
+    navigate('/menu/foodie_restaurant');
+  };
+
+  // Function to handle time window click and scroll to menu
+  const handleTimeWindowClick = (mealType) => {
+    setSelectedCategory(mealType);
+    // Scroll to the menu section
+    setTimeout(() => {
+      const menuSection = document.querySelector('.food-categories-section');
+      if (menuSection) {
+        menuSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
+  };
+
+  // Function to check if a specific meal slot is currently open
+  const isMealSlotOpen = (mealType) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+
+    switch (mealType) {
+      case 'BREAKFAST':
+        // Order from 7 PM (19:00) to 6 AM (6:00)
+        const breakfastStart = 19 * 60; // 7 PM in minutes
+        const breakfastEnd = 6 * 60; // 6 AM in minutes
+        return currentTime >= breakfastStart || currentTime <= breakfastEnd;
+        
+      case 'LUNCH':
+        // Order from 6 AM (6:00) to 10 AM (10:00)
+        const lunchStart = 6 * 60; // 6 AM in minutes
+        const lunchEnd = 10 * 60; // 10 AM in minutes
+        return currentTime >= lunchStart && currentTime <= lunchEnd;
+        
+      case 'DINNER':
+        // Order from 12 PM (12:00) to 6:45 PM (18:45)
+        const dinnerStart = 12 * 60; // 12 PM in minutes
+        const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
+        return currentTime >= dinnerStart && currentTime <= dinnerEnd;
+        
+      default:
+        return false;
+    }
+  };
+
+  // Function to calculate remaining time for open meal slots
+  const calculateRemainingTime = (mealType) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+
+    switch (mealType) {
+      case 'BREAKFAST':
+        // Order from 7 PM (19:00) to 6 AM (6:00)
+        const breakfastStart = 19 * 60; // 7 PM in minutes
+        const breakfastEnd = 6 * 60; // 6 AM in minutes
+        
+        if (currentTime >= breakfastStart || currentTime <= breakfastEnd) {
+          // Ordering is currently allowed - calculate remaining time
+          if (currentTime >= breakfastStart) {
+            // After 7 PM, ordering ends at 6 AM next day
+            const minutesUntilEnd = (24 * 60) - currentTime + breakfastEnd;
+            return {
+              hours: Math.floor(minutesUntilEnd / 60),
+              minutes: minutesUntilEnd % 60,
+              isOpen: true
+            };
+          } else {
+            // Before 6 AM, ordering ends at 6 AM today
+            const minutesUntilEnd = breakfastEnd - currentTime;
+            return {
+              hours: Math.floor(minutesUntilEnd / 60),
+              minutes: minutesUntilEnd % 60,
+              isOpen: true
+            };
+          }
+        }
+        break;
+        
+      case 'LUNCH':
+        // Order from 6 AM (6:00) to 10 AM (10:00)
+        const lunchStart = 6 * 60; // 6 AM in minutes
+        const lunchEnd = 10 * 60; // 10 AM in minutes
+        
+        if (currentTime >= lunchStart && currentTime <= lunchEnd) {
+          // Ordering is currently allowed - calculate remaining time
+          const minutesUntilEnd = lunchEnd - currentTime;
+          return {
+            hours: Math.floor(minutesUntilEnd / 60),
+            minutes: minutesUntilEnd % 60,
+            isOpen: true
+          };
+        }
+        break;
+        
+      case 'DINNER':
+        // Order from 12 PM (12:00) to 6:45 PM (18:45)
+        const dinnerStart = 12 * 60; // 12 PM in minutes
+        const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
+        
+        if (currentTime >= dinnerStart && currentTime <= dinnerEnd) {
+          // Ordering is currently allowed - calculate remaining time
+          const minutesUntilEnd = dinnerEnd - currentTime;
+          return {
+            hours: Math.floor(minutesUntilEnd / 60),
+            minutes: minutesUntilEnd % 60,
+            isOpen: true
+          };
+        }
+        break;
+    }
+    
+    return { isOpen: false };
+  };
+
+  // Function to calculate countdown timer for each meal type
+  const calculateCountdown = (mealType) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+
+    switch (mealType) {
+      case 'BREAKFAST':
+        // Order from 7 PM (19:00) to 6 AM (6:00)
+        const breakfastStart = 19 * 60; // 7 PM in minutes
+        const breakfastEnd = 6 * 60; // 6 AM in minutes
+        
+        if (currentTime >= breakfastStart || currentTime <= breakfastEnd) {
+          return null; // Ordering is currently allowed
+        } else if (currentTime > breakfastEnd && currentTime < breakfastStart) {
+          // Between 6 AM and 7 PM - next ordering starts at 7 PM
+          const nextStart = breakfastStart;
+          const minutesUntilStart = nextStart - currentTime;
+          return {
+            hours: Math.floor(minutesUntilStart / 60),
+            minutes: minutesUntilStart % 60,
+            seconds: 0
+          };
+        }
+        break;
+        
+      case 'LUNCH':
+        // Order from 6 AM (6:00) to 10 AM (10:00)
+        const lunchStart = 6 * 60; // 6 AM in minutes
+        const lunchEnd = 10 * 60; // 10 AM in minutes
+        
+        if (currentTime >= lunchStart && currentTime <= lunchEnd) {
+          return null; // Ordering is currently allowed
+        } else if (currentTime < lunchStart) {
+          // Before 6 AM - next ordering starts at 6 AM
+          const minutesUntilStart = lunchStart - currentTime;
+          return {
+            hours: Math.floor(minutesUntilStart / 60),
+            minutes: minutesUntilStart % 60,
+            seconds: 0
+          };
+        } else if (currentTime > lunchEnd) {
+          // After 10 AM - next ordering starts tomorrow at 6 AM
+          const minutesUntilTomorrow = (24 * 60) - currentTime + lunchStart;
+          return {
+            hours: Math.floor(minutesUntilTomorrow / 60),
+            minutes: minutesUntilTomorrow % 60,
+            seconds: 0
+          };
+        }
+        break;
+        
+      case 'DINNER':
+        // Order from 12 PM (12:00) to 6:45 PM (18:45)
+        const dinnerStart = 12 * 60; // 12 PM in minutes
+        const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
+        
+        if (currentTime >= dinnerStart && currentTime <= dinnerEnd) {
+          return null; // Ordering is currently allowed
+        } else if (currentTime < dinnerStart) {
+          // Before 12 PM - next ordering starts at 12 PM
+          const minutesUntilStart = dinnerStart - currentTime;
+          return {
+            hours: Math.floor(minutesUntilStart / 60),
+            minutes: minutesUntilStart % 60,
+            seconds: 0
+          };
+        } else if (currentTime > dinnerEnd) {
+          // After 6:45 PM - next ordering starts tomorrow at 12 PM
+          const minutesUntilTomorrow = (24 * 60) - currentTime + dinnerStart;
+          return {
+            hours: Math.floor(minutesUntilTomorrow / 60),
+            minutes: minutesUntilTomorrow % 60,
+            seconds: 0
+          };
+        }
+        break;
+        
+      default:
+        return null;
+    }
+    
+    return null;
+  };
+
+  // Update countdown timers every second
+  useEffect(() => {
+    const updateTimers = () => {
+      const timers = {};
+      ['BREAKFAST', 'LUNCH', 'DINNER'].forEach(mealType => {
+        timers[mealType] = calculateCountdown(mealType);
+      });
+      setCountdownTimers(timers);
+    };
+
+    // Update immediately
+    updateTimers();
+
+    // Update every second
+    const interval = setInterval(updateTimers, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Update remaining time for current selected category
+  useEffect(() => {
+    const updateRemainingTime = () => {
+      const timeInfo = calculateRemainingTime(selectedCategory);
+      setRemainingTime(timeInfo);
+    };
+
+    // Update immediately
+    updateRemainingTime();
+
+    // Update every minute
+    const interval = setInterval(updateRemainingTime, 60000);
+
+    return () => clearInterval(interval);
+  }, [selectedCategory]);
+
+  // Function to get item quantity from cart
+  const getItemQuantity = (item) => {
+    const itemId = `${selectedCategory}_${item.name.replace(/\s+/g, '_').toLowerCase()}`;
+    const cartItem = cart.find(cartItem => cartItem.menuItemId === itemId);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
   // Function to handle adding item to cart
   const handleAddToCart = (item) => {
+    // Check if user is authenticated
+    if (!user) {
+      setShowLoginPopup(true);
+      return;
+    }
+
     const menuItem = {
       id: `${selectedCategory}_${item.name.replace(/\s+/g, '_').toLowerCase()}`,
       name: item.name,
@@ -44,6 +308,56 @@ const Home = () => {
     }, 100);
   };
 
+  // Function to handle increasing quantity
+  const handleIncreaseQuantity = (item) => {
+    // Check if user is authenticated
+    if (!user) {
+      setShowLoginPopup(true);
+      return;
+    }
+
+    const menuItem = {
+      id: `${selectedCategory}_${item.name.replace(/\s+/g, '_').toLowerCase()}`,
+      name: item.name,
+      price: item.price,
+      restaurantId: 'foodie_restaurant',
+      restaurantName: 'Foodie Restaurant'
+    };
+    
+    addToCart(menuItem);
+    
+    // Calculate notification message for free delivery
+    setTimeout(() => {
+      const currentTotal = getCartTotal();
+      const remainingAmount = FREE_DELIVERY_THRESHOLD - currentTotal;
+      
+      if (remainingAmount > 0) {
+        setNotificationMessage(`Add ₹${remainingAmount} more for free delivery!`);
+        setIsFreeDelivery(false);
+      } else {
+        setNotificationMessage('🎉 You qualify for free delivery!');
+        setIsFreeDelivery(true);
+      }
+      
+      setShowCartNotification(true);
+      setTimeout(() => setShowCartNotification(false), 4000);
+    }, 100);
+  };
+
+  // Function to handle decreasing quantity
+  const handleDecreaseQuantity = (item) => {
+    const itemId = `${selectedCategory}_${item.name.replace(/\s+/g, '_').toLowerCase()}`;
+    const cartItem = cart.find(cartItem => cartItem.menuItemId === itemId);
+    
+    if (cartItem) {
+      if (cartItem.quantity > 1) {
+        updateCartItemQuantity(cartItem.id, cartItem.quantity - 1);
+      } else {
+        removeFromCart(cartItem.id);
+      }
+    }
+  };
+
   // Function to check if ordering is allowed for a specific meal type
   const isOrderingAllowed = (mealType) => {
     const now = new Date();
@@ -53,9 +367,9 @@ const Home = () => {
 
     switch (mealType) {
       case 'BREAKFAST':
-        // Order from 9 PM (21:00) to 7:30 AM (7:30)
-        const breakfastStart = 21 * 60; // 9 PM in minutes
-        const breakfastEnd = 7 * 60 + 30; // 7:30 AM in minutes
+        // Order from 7 PM (19:00) to 6 AM (6:00)
+        const breakfastStart = 19 * 60; // 7 PM in minutes
+        const breakfastEnd = 6 * 60; // 6 AM in minutes
         return currentTime >= breakfastStart || currentTime <= breakfastEnd;
       
       case 'LUNCH':
@@ -65,9 +379,9 @@ const Home = () => {
         return currentTime >= lunchStart && currentTime <= lunchEnd;
       
       case 'DINNER':
-        // Order from 12 PM (12:00) to 5 PM (17:00)
+        // Order from 12 PM (12:00) to 6:45 PM (18:45)
         const dinnerStart = 12 * 60; // 12 PM in minutes
-        const dinnerEnd = 17 * 60; // 5 PM in minutes
+        const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
         return currentTime >= dinnerStart && currentTime <= dinnerEnd;
       
       default:
@@ -79,7 +393,7 @@ const Home = () => {
     {
       type: 'BREAKFAST',
       title: 'Breakfast',
-      description: 'Order from 9 PM to 7:30 AM',
+      description: 'Order from 7 PM to 6 AM',
       deliveryTime: '10:00 AM - 11:00 AM',
       icon: '🌅',
       color: '#fbbf24'
@@ -95,7 +409,7 @@ const Home = () => {
     {
       type: 'DINNER',
       title: 'Dinner',
-      description: 'Order from 12 PM to 5 PM',
+      description: 'Order from 12 PM to 6:45 PM',
       deliveryTime: '7:30 PM - 8:15 PM',
       icon: '🌙',
       color: '#8b5cf6'
@@ -142,6 +456,13 @@ const Home = () => {
             <div className="notification-main">Item added to cart! ({getCartItemCount()} items)</div>
             <div className="notification-sub">{notificationMessage}</div>
           </div>
+          <button 
+            className="notification-close"
+            onClick={() => setShowCartNotification(false)}
+            title="Close notification"
+          >
+            ×
+          </button>
         </div>
       )}
 
@@ -150,7 +471,10 @@ const Home = () => {
         <div className="container">
           <div className="hero-content">
             <h1 className="hero-title">
-              Welcome to Foodie Restaurant
+              <span className="animated-word">Welcome</span>
+              <span className="animated-word">to</span>
+              <span className="animated-word">Foodie</span>
+              <span className="animated-word">Restaurant</span>
             </h1>
             <p className="hero-description">
               Experience time-based food delivery with specific ordering windows for breakfast, lunch, and dinner. 
@@ -161,10 +485,30 @@ const Home = () => {
                 <FaClock className="btn-icon" />
                 View Orders
               </Link>
-              <Link to="/register" className="btn btn-primary btn-lg">
-                <FaUtensils className="btn-icon" />
-                Create Account
-              </Link>
+              {!user && (
+                <>
+                  <Link to="/register" className="btn btn-primary btn-lg">
+                    <FaUtensils className="btn-icon" />
+                    Create Account
+                  </Link>
+                  <button 
+                    className="btn btn-outline btn-lg"
+                    onClick={() => setShowLoginPopup(true)}
+                  >
+                    <FaUtensils className="btn-icon" />
+                    Log in to start ordering
+                  </button>
+                </>
+              )}
+              {user && (
+                <button 
+                  className="btn btn-primary btn-lg start-ordering-btn"
+                  onClick={handleStartOrdering}
+                >
+                  <FaUtensils className="btn-icon" />
+                  Start Ordering
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -180,7 +524,12 @@ const Home = () => {
           
           <div className="meal-types">
             {mealTypes.map((meal) => (
-              <div key={meal.type} className="meal-type-card">
+              <div 
+                key={meal.type} 
+                className="meal-type-card"
+                onClick={() => handleTimeWindowClick(meal.type)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="meal-type-icon" style={{ backgroundColor: meal.color }}>
                   {meal.icon}
                 </div>
@@ -190,6 +539,17 @@ const Home = () => {
                   <FaTruck className="delivery-icon" />
                   <span>Delivered: {meal.deliveryTime}</span>
                 </div>
+                <div className="click-hint">
+                  <span>Click to view menu →</span>
+                </div>
+                
+                {/* Arrow indicator when slot is open */}
+                {isMealSlotOpen(meal.type) && (
+                  <div className="slot-open-indicator">
+                    <FaChevronDown className="arrow-icon" />
+                    <span className="arrow-text">Order Now!</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -259,11 +619,57 @@ const Home = () => {
                 <FaTruck className="delivery-icon" />
                 <span>Delivered: {mealTypes.find(meal => meal.type === selectedCategory)?.deliveryTime}</span>
               </div>
+              
+              {/* Countdown Timer */}
+              {countdownTimers[selectedCategory] && (
+                <div className="countdown-timer">
+                  <div className="countdown-icon">
+                    <FaClock />
+                  </div>
+                  <div className="countdown-content">
+                    <div className="countdown-text">Ordering starts in:</div>
+                    <div className="countdown-time">
+                      {countdownTimers[selectedCategory].hours > 0 && (
+                        <span className="time-unit">
+                          {countdownTimers[selectedCategory].hours}h
+                        </span>
+                      )}
+                      <span className="time-unit">
+                        {countdownTimers[selectedCategory].minutes}m
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Within Time Display */}
+              {remainingTime && remainingTime.isOpen && (
+                <div className="order-within-timer">
+                  <div className="order-within-icon">
+                    <FaClock />
+                  </div>
+                  <div className="order-within-content">
+                    <div className="order-within-text">Order within:</div>
+                    <div className="order-within-time">
+                      {remainingTime.hours > 0 && (
+                        <span className="time-unit">
+                          {remainingTime.hours}h
+                        </span>
+                      )}
+                      <span className="time-unit">
+                        {remainingTime.minutes}m
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="menu-items">
               {menuItems[selectedCategory].map((item, index) => {
                 const orderingAllowed = isOrderingAllowed(selectedCategory);
+                const quantity = getItemQuantity(item);
+                
                 return (
                   <div key={index} className="menu-item">
                     <div className="menu-item-info">
@@ -271,14 +677,34 @@ const Home = () => {
                     </div>
                     <div className="menu-item-price">
                       <span className="price">₹{item.price}</span>
-                      <button 
-                        className={`add-to-cart-btn ${!orderingAllowed ? 'disabled' : ''}`}
-                        disabled={!orderingAllowed}
-                        onClick={() => orderingAllowed && handleAddToCart(item)}
-                        title={!orderingAllowed ? `Ordering closed for ${selectedCategory.toLowerCase()}` : 'Add to cart'}
-                      >
-                        {orderingAllowed ? 'Add to Cart' : 'Ordering Closed'}
-                      </button>
+                      {quantity === 0 ? (
+                        <button 
+                          className={`add-to-cart-btn ${!orderingAllowed ? 'disabled' : ''}`}
+                          disabled={!orderingAllowed}
+                          onClick={() => orderingAllowed && handleAddToCart(item)}
+                          title={!orderingAllowed ? `Ordering closed for ${selectedCategory.toLowerCase()}` : 'Add to cart'}
+                        >
+                          {orderingAllowed ? 'Add to Cart' : 'Ordering Closed'}
+                        </button>
+                      ) : (
+                        <div className="quantity-controls">
+                          <button 
+                            className="quantity-btn decrease"
+                            onClick={() => handleDecreaseQuantity(item)}
+                            title="Decrease quantity"
+                          >
+                            -
+                          </button>
+                          <span className="quantity-display">{quantity}</span>
+                          <button 
+                            className="quantity-btn increase"
+                            onClick={() => handleIncreaseQuantity(item)}
+                            title="Increase quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -297,16 +723,39 @@ const Home = () => {
               Join thousands of satisfied customers who trust Foodie Restaurant for their meal delivery needs.
             </p>
             <div className="cta-actions">
-              <button className="btn btn-primary btn-lg" onClick={() => setSelectedCategory('BREAKFAST')}>
-                Start Ordering
-              </button>
-              <Link to="/register" className="btn btn-primary btn-lg">
-                Create Account
-              </Link>
+              {user ? (
+                <button 
+                  className="btn btn-primary btn-lg start-ordering-btn"
+                  onClick={handleStartOrdering}
+                >
+                  <FaUtensils className="btn-icon" />
+                  Start Ordering
+                </button>
+              ) : (
+                <>
+                  <Link to="/register" className="btn btn-primary btn-lg">
+                    <FaUtensils className="btn-icon" />
+                    Create Account
+                  </Link>
+                  <button 
+                    className="btn btn-outline btn-lg"
+                    onClick={() => setShowLoginPopup(true)}
+                  >
+                    <FaUtensils className="btn-icon" />
+                    Log in to start ordering
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
       </section>
+
+      {/* Login Popup */}
+      <LoginPopup 
+        isOpen={showLoginPopup} 
+        onClose={() => setShowLoginPopup(false)} 
+      />
     </div>
   );
 };
