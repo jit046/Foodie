@@ -58,16 +58,17 @@
 
 .input-icon {
   position: absolute;
-  left: 16px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #9ca3af;
-  font-size: 16px;
+  font-size: 14px;
+  z-index: 1;
 }
 
 .form-input {
   width: 100%;
-  padding: 12px 16px 12px 48px;
+  padding: 12px 16px 12px 40px;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 16px;
@@ -166,12 +167,12 @@
   
   .form-input {
     font-size: 14px;
-    padding: 10px 14px 10px 40px;
+    padding: 10px 14px 10px 36px;
   }
   
   .input-icon {
-    left: 14px;
-    font-size: 14px;
+    left: 10px;
+    font-size: 12px;
   }
   
   .password-toggle {

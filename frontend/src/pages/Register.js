@@ -66,7 +66,7 @@ const Register = () => {
         <div className="register-card">
           <div className="register-header">
             <h1 className="register-title">Create Account</h1>
-            <p className="register-subtitle">Join FoodieTime today</p>
+            <p className="register-subtitle">Join Foodie Restaurant today</p>
           </div>
 
           <form onSubmit={handleSubmit} className="register-form">

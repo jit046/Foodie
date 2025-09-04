@@ -24,17 +24,13 @@ const Navbar = () => {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={() => setIsMenuOpen(false)}>
           <FaUtensils className="logo-icon" />
-          FoodieTime
+          Foodie Restaurant
         </Link>
 
         <div className="navbar-menu">
           <Link to="/" className="navbar-link" onClick={() => setIsMenuOpen(false)}>
             <FaHome className="link-icon" />
             Home
-          </Link>
-          <Link to="/restaurants" className="navbar-link" onClick={() => setIsMenuOpen(false)}>
-            <FaUtensils className="link-icon" />
-            Restaurants
           </Link>
           {user && (
             <Link to="/orders" className="navbar-link" onClick={() => setIsMenuOpen(false)}>
@@ -94,10 +90,6 @@ const Navbar = () => {
           <Link to="/" className="mobile-link" onClick={() => setIsMenuOpen(false)}>
             <FaHome className="link-icon" />
             Home
-          </Link>
-          <Link to="/restaurants" className="mobile-link" onClick={() => setIsMenuOpen(false)}>
-            <FaUtensils className="link-icon" />
-            Restaurants
           </Link>
           {user && (
             <>

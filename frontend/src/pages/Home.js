@@ -71,7 +71,7 @@ const Home = () => {
         <div className="container">
           <div className="hero-content">
             <h1 className="hero-title">
-              Order Food at the Right Time
+              Welcome to Foodie Restaurant
             </h1>
             <p className="hero-description">
               Experience time-based food delivery with specific ordering windows for breakfast, lunch, and dinner. 
@@ -121,7 +121,7 @@ const Home = () => {
       {/* Features Section */}
       <section className="features-section">
         <div className="container">
-          <h2 className="section-title">Why Choose FoodieTime?</h2>
+          <h2 className="section-title">Why Choose Foodie Restaurant?</h2>
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">
@@ -212,7 +212,7 @@ const Home = () => {
           <div className="cta-content">
             <h2 className="cta-title">Ready to Order?</h2>
             <p className="cta-description">
-              Join thousands of satisfied customers who trust FoodieTime for their meal delivery needs.
+              Join thousands of satisfied customers who trust Foodie Restaurant for their meal delivery needs.
             </p>
             <div className="cta-actions">
               <button className="btn btn-primary btn-lg" onClick={() => setSelectedCategory('BREAKFAST')}>
