@@ -41,16 +41,6 @@ export const OrderProvider = ({ children }) => {
   }, [orderHistory]);
 
   const addToCart = (menuItem, quantity = 1, customizations = []) => {
-    // Check if adding this item would exceed the 4-item limit
-    const currentItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-    
-    if (currentItemCount + quantity > 4) {
-      return {
-        success: false,
-        error: `Cannot add more items. Maximum 4 items allowed in cart. You currently have ${currentItemCount} items.`
-      };
-    }
-
     const cartItem = {
       id: `${menuItem.id}_${Date.now()}`,
       menuItemId: menuItem.id,
@@ -69,7 +59,7 @@ export const OrderProvider = ({ children }) => {
       );
 
       if (existingItem) {
-        // Check if updating existing item would exceed limit
+        // Check if updating existing item would exceed 4 quantity limit for this specific item
         const newQuantity = existingItem.quantity + quantity;
         if (newQuantity > 4) {
           return prevCart; // Don't update if it would exceed limit
@@ -80,6 +70,10 @@ export const OrderProvider = ({ children }) => {
             : item
         );
       } else {
+        // Check if new item quantity exceeds 4
+        if (quantity > 4) {
+          return prevCart; // Don't add if quantity exceeds limit
+        }
         return [...prevCart, cartItem];
       }
     });
@@ -97,20 +91,12 @@ export const OrderProvider = ({ children }) => {
       return;
     }
 
-    // Check if updating this item would exceed the 4-item limit
-    const currentItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-    const itemToUpdate = cart.find(item => item.id === itemId);
-    
-    if (itemToUpdate) {
-      const currentItemQuantity = itemToUpdate.quantity;
-      const newTotalCount = currentItemCount - currentItemQuantity + quantity;
-      
-      if (newTotalCount > 4) {
-        return {
-          success: false,
-          error: `Cannot update quantity. Maximum 4 items allowed in cart.`
-        };
-      }
+    // Check if updating this item would exceed the 4-quantity limit for this specific item
+    if (quantity > 4) {
+      return {
+        success: false,
+        error: `Cannot update quantity. Maximum 4 quantities allowed per item.`
+      };
     }
 
     setCart(prevCart =>

@@ -88,6 +88,22 @@ const Menu = () => {
           };
         }
         break;
+        
+      case 'CAKE':
+        // Order from 7 AM (7:00) to 5 PM (17:00)
+        const cakeStart = 7 * 60; // 7 AM in minutes
+        const cakeEnd = 17 * 60; // 5 PM in minutes
+        
+        if (currentTime >= cakeStart && currentTime <= cakeEnd) {
+          // Ordering is currently allowed - calculate remaining time
+          const minutesUntilEnd = cakeEnd - currentTime;
+          return {
+            hours: Math.floor(minutesUntilEnd / 60),
+            minutes: minutesUntilEnd % 60,
+            isOpen: true
+          };
+        }
+        break;
     }
     
     return { isOpen: false };
@@ -164,6 +180,32 @@ const Menu = () => {
         } else if (currentTime > dinnerEnd) {
           // After 6:45 PM - next ordering starts tomorrow at 12 PM
           const minutesUntilTomorrow = (24 * 60) - currentTime + dinnerStart;
+          return {
+            hours: Math.floor(minutesUntilTomorrow / 60),
+            minutes: minutesUntilTomorrow % 60,
+            seconds: 0
+          };
+        }
+        break;
+        
+      case 'CAKE':
+        // Order from 7 AM (7:00) to 5 PM (17:00)
+        const cakeStart = 7 * 60; // 7 AM in minutes
+        const cakeEnd = 17 * 60; // 5 PM in minutes
+        
+        if (currentTime >= cakeStart && currentTime <= cakeEnd) {
+          return null; // Ordering is currently allowed
+        } else if (currentTime < cakeStart) {
+          // Before 7 AM - next ordering starts at 7 AM
+          const minutesUntilStart = cakeStart - currentTime;
+          return {
+            hours: Math.floor(minutesUntilStart / 60),
+            minutes: minutesUntilStart % 60,
+            seconds: 0
+          };
+        } else if (currentTime > cakeEnd) {
+          // After 5 PM - next ordering starts tomorrow at 7 AM
+          const minutesUntilTomorrow = (24 * 60) - currentTime + cakeStart;
           return {
             hours: Math.floor(minutesUntilTomorrow / 60),
             minutes: minutesUntilTomorrow % 60,
@@ -351,6 +393,12 @@ const Menu = () => {
         const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
         return currentTime >= dinnerStart && currentTime <= dinnerEnd;
       
+      case 'CAKE':
+        // Order from 7 AM (7:00) to 5 PM (17:00)
+        const cakeStart = 7 * 60; // 7 AM in minutes
+        const cakeEnd = 17 * 60; // 5 PM in minutes
+        return currentTime >= cakeStart && currentTime <= cakeEnd;
+      
       default:
         return false;
     }
@@ -380,6 +428,14 @@ const Menu = () => {
       deliveryTime: '7:30 PM - 8:15 PM',
       icon: '🌙',
       color: '#8b5cf6'
+    },
+    {
+      type: 'CAKE',
+      title: 'Cake',
+      description: 'Order from 7 AM to 5 PM (Advanced Order)',
+      deliveryTime: 'Next Day Delivery',
+      icon: '🎂',
+      color: '#ec4899'
     }
   ];
 
@@ -410,6 +466,26 @@ const Menu = () => {
       { name: 'Mix Veg + Paratha', price: 50 },
       { name: 'Gulab Jamun (2 pcs)', price: 20 },
       { name: 'Buttermilk', price: 12 }
+    ],
+    CAKE: [
+      { name: 'Fruiti Cake', price: 200 },
+      { name: 'Chocolate Truffle Cake', price: 500 },
+      { name: 'Black Forest Cake', price: 400 },
+      { name: 'Pineapple Cake', price: 350 },
+      { name: 'Red Velvet Cake', price: 600 },
+      { name: 'Butterscotch Cake', price: 450 },
+      { name: 'Vanilla Cake', price: 300 },
+      { name: 'Strawberry Cake', price: 350 },
+      { name: 'Mango Mousse Cake', price: 500 },
+      { name: 'Coffee Walnut Cake', price: 550 },
+      { name: 'Choco Lava Cake (per piece)', price: 120 },
+      { name: 'Cheesecake (Blueberry)', price: 700 },
+      { name: 'KitKat Cake', price: 550 },
+      { name: 'Oreo Cake', price: 500 },
+      { name: 'Tiramisu Cake', price: 750 },
+      { name: 'Rainbow Cake', price: 600 },
+      { name: 'Rasmalai Cake', price: 650 },
+      { name: 'Ferrero Rocher Cake', price: 800 }
     ]
   };
   
@@ -421,7 +497,7 @@ const Menu = () => {
           <FaShoppingCart className="cart-icon" />
           <div className="notification-content">
             <div className="notification-main">{notificationMessage}</div>
-            <div className="notification-sub">Cart: {getCartItemCount()}/4 items</div>
+            <div className="notification-sub">Cart: {getCartItemCount()} items (Max 4 per item)</div>
           </div>
           <button 
             className="notification-close"
