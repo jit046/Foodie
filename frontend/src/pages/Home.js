@@ -450,6 +450,12 @@ const Home = () => {
         const dinnerEnd = 18 * 60 + 45; // 6:45 PM in minutes
         return currentTime >= dinnerStart && currentTime <= dinnerEnd;
       
+      case 'CAKE':
+        // Order from 7 AM (7:00) to 5 PM (17:00)
+        const cakeStart = 7 * 60; // 7 AM in minutes
+        const cakeEnd = 17 * 60; // 5 PM in minutes
+        return currentTime >= cakeStart && currentTime <= cakeEnd;
+      
       default:
         return false;
     }
