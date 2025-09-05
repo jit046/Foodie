@@ -41,6 +41,16 @@ export const OrderProvider = ({ children }) => {
   }, [orderHistory]);
 
   const addToCart = (menuItem, quantity = 1, customizations = []) => {
+    // Check if adding this item would exceed the 4-item limit
+    const currentItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+    
+    if (currentItemCount + quantity > 4) {
+      return {
+        success: false,
+        error: `Cannot add more items. Maximum 4 items allowed in cart. You currently have ${currentItemCount} items.`
+      };
+    }
+
     const cartItem = {
       id: `${menuItem.id}_${Date.now()}`,
       menuItemId: menuItem.id,
@@ -59,15 +69,22 @@ export const OrderProvider = ({ children }) => {
       );
 
       if (existingItem) {
+        // Check if updating existing item would exceed limit
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity > 4) {
+          return prevCart; // Don't update if it would exceed limit
+        }
         return prevCart.map(item =>
           item.id === existingItem.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: newQuantity }
             : item
         );
       } else {
         return [...prevCart, cartItem];
       }
     });
+
+    return { success: true };
   };
 
   const removeFromCart = (itemId) => {
@@ -80,11 +97,29 @@ export const OrderProvider = ({ children }) => {
       return;
     }
 
+    // Check if updating this item would exceed the 4-item limit
+    const currentItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+    const itemToUpdate = cart.find(item => item.id === itemId);
+    
+    if (itemToUpdate) {
+      const currentItemQuantity = itemToUpdate.quantity;
+      const newTotalCount = currentItemCount - currentItemQuantity + quantity;
+      
+      if (newTotalCount > 4) {
+        return {
+          success: false,
+          error: `Cannot update quantity. Maximum 4 items allowed in cart.`
+        };
+      }
+    }
+
     setCart(prevCart =>
       prevCart.map(item =>
         item.id === itemId ? { ...item, quantity } : item
       )
     );
+
+    return { success: true };
   };
 
   const clearCart = () => {

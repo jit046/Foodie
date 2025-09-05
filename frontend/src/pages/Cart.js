@@ -98,9 +98,9 @@ const Cart = () => {
             <p>Add some delicious items to get started!</p>
             <button 
               className="btn btn-primary"
-              onClick={() => navigate('/restaurants')}
+              onClick={() => navigate('/')}
             >
-              Browse Restaurants
+              Browse Menu
             </button>
           </div>
         </div>

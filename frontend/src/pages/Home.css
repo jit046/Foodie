@@ -4,7 +4,7 @@
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  background: linear-gradient(135deg, var(--accent-color), #f7931e);
   color: white;
   padding: 100px 0;
   text-align: center;
@@ -137,7 +137,7 @@
 /* Time Windows Section */
 .time-windows-section {
   padding: 80px 0;
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
 }
 
 .section-title {
@@ -145,13 +145,13 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 16px;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .section-description {
   font-size: 18px;
   text-align: center;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 60px;
   max-width: 600px;
   margin-left: auto;
@@ -167,18 +167,18 @@
 }
 
 .meal-type-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 32px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .meal-type-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
 }
 
 .meal-type-card:active {
@@ -189,7 +189,7 @@
 .click-hint {
   margin-top: 12px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-weight: 500;
   opacity: 0.8;
   transition: opacity 0.2s ease;
@@ -197,7 +197,7 @@
 
 .meal-type-card:hover .click-hint {
   opacity: 1;
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 .meal-type-icon {
@@ -215,12 +215,12 @@
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 12px;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .meal-type-description {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 20px;
   line-height: 1.5;
 }
@@ -230,19 +230,19 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #374151;
+  color: var(--text-secondary);
   font-weight: 500;
   margin-bottom: 20px;
 }
 
 .delivery-icon {
-  color: #10b981;
+  color: var(--success-color);
 }
 
 /* Features Section */
 .features-section {
   padding: 80px 0;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .features-grid {
@@ -275,19 +275,19 @@
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 16px;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .feature-description {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 /* Food Categories Section */
 .food-categories-section {
   padding: 80px 0;
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
 }
 
 .category-buttons {
@@ -345,10 +345,10 @@
 }
 
 .menu-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   max-width: 800px;
   margin: 0 auto;
 }
@@ -365,7 +365,7 @@
 .menu-title {
   font-size: 28px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -373,7 +373,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -493,15 +493,15 @@
 }
 
 .order-within-time .time-unit {
-  background: white;
-  color: #10b981;
+  background: var(--bg-primary);
+  color: var(--success-color);
   padding: 8px 12px;
   border-radius: 8px;
   font-weight: 700;
   font-size: 16px;
   min-width: 50px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 @keyframes orderWithinPulse {

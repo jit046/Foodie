@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useOrder } from '../contexts/OrderContext';
 import { FaShoppingCart, FaUser, FaBars, FaTimes, FaHome, FaUtensils, FaHistory } from 'react-icons/fa';
+import ThemeToggle from './ThemeToggle';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -41,6 +42,8 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-actions">
+          <ThemeToggle />
+          
           {user ? (
             <>
               <Link to="/cart" className="cart-link" onClick={() => setIsMenuOpen(false)}>
@@ -87,6 +90,10 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="mobile-menu">
+          <div className="mobile-theme-toggle">
+            <ThemeToggle />
+          </div>
+          
           <Link to="/" className="mobile-link" onClick={() => setIsMenuOpen(false)}>
             <FaHome className="link-icon" />
             Home

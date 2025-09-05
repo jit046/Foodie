@@ -237,7 +237,16 @@ const Menu = () => {
       restaurantName: 'Foodie Restaurant'
     };
     
-    addToCart(menuItem);
+    const result = addToCart(menuItem);
+    
+    if (result && !result.success) {
+      // Show error notification
+      setNotificationMessage(result.error);
+      setIsFreeDelivery(false);
+      setShowCartNotification(true);
+      setTimeout(() => setShowCartNotification(false), 4000);
+      return;
+    }
     
     // Calculate notification message for free delivery
     setTimeout(() => {
@@ -273,7 +282,16 @@ const Menu = () => {
       restaurantName: 'Foodie Restaurant'
     };
     
-    addToCart(menuItem);
+    const result = addToCart(menuItem);
+    
+    if (result && !result.success) {
+      // Show error notification
+      setNotificationMessage(result.error);
+      setIsFreeDelivery(false);
+      setShowCartNotification(true);
+      setTimeout(() => setShowCartNotification(false), 4000);
+      return;
+    }
     
     // Calculate notification message for free delivery
     setTimeout(() => {
@@ -402,8 +420,8 @@ const Menu = () => {
         <div className={`cart-notification ${isFreeDelivery ? 'free-delivery' : ''}`}>
           <FaShoppingCart className="cart-icon" />
           <div className="notification-content">
-            <div className="notification-main">Item added to cart! ({getCartItemCount()} items)</div>
-            <div className="notification-sub">{notificationMessage}</div>
+            <div className="notification-main">{notificationMessage}</div>
+            <div className="notification-sub">Cart: {getCartItemCount()}/4 items</div>
           </div>
           <button 
             className="notification-close"

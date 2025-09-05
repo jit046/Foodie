@@ -1,0 +1,78 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--theme-toggle-bg, #f8f9fa);
+  border: 2px solid var(--theme-toggle-border, #e9ecef);
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--theme-toggle-text, #495057);
+}
+
+.theme-btn:hover {
+  background: var(--theme-toggle-hover-bg, #e9ecef);
+  border-color: var(--theme-toggle-hover-border, #dee2e6);
+  transform: translateY(-1px);
+}
+
+.theme-btn.active {
+  background: var(--theme-toggle-active-bg, #007bff);
+  border-color: var(--theme-toggle-active-border, #0056b3);
+  color: var(--theme-toggle-active-text, #ffffff);
+}
+
+.theme-btn.active:hover {
+  background: var(--theme-toggle-active-hover-bg, #0056b3);
+  border-color: var(--theme-toggle-active-hover-border, #004085);
+}
+
+.theme-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.theme-btn:hover .theme-icon {
+  transform: scale(1.1);
+}
+
+.theme-text {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Dark theme styles */
+.theme-dark .theme-btn {
+  --theme-toggle-bg: #343a40;
+  --theme-toggle-border: #495057;
+  --theme-toggle-text: #ffffff;
+  --theme-toggle-hover-bg: #495057;
+  --theme-toggle-hover-border: #6c757d;
+  --theme-toggle-active-bg: #28a745;
+  --theme-toggle-active-border: #1e7e34;
+  --theme-toggle-active-text: #ffffff;
+  --theme-toggle-active-hover-bg: #1e7e34;
+  --theme-toggle-active-hover-border: #155724;
+}
+
+/* Light theme styles */
+.theme-light .theme-btn {
+  --theme-toggle-bg: #f8f9fa;
+  --theme-toggle-border: #e9ecef;
+  --theme-toggle-text: #495057;
+  --theme-toggle-hover-bg: #e9ecef;
+  --theme-toggle-hover-border: #dee2e6;
+  --theme-toggle-active-bg: #007bff;
+  --theme-toggle-active-border: #0056b3;
+  --theme-toggle-active-text: #ffffff;
+  --theme-toggle-active-hover-bg: #0056b3;
+  --theme-toggle-active-hover-border: #004085;
+}
