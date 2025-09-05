@@ -616,9 +616,63 @@ const Menu = () => {
               {menuItems[selectedCategory].map((item, index) => {
                 const orderingAllowed = isOrderingAllowed(selectedCategory);
                 const quantity = getItemQuantity(item);
-                
+
+                // Determine a representative image per item name
+                const getImageForItem = (name) => {
+                  const key = name.toLowerCase();
+                  if (key.includes('idli')) return 'https://images.unsplash.com/photo-1668236543099-4e9ef32ed500?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('dosa')) return 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('poha')) return 'https://images.unsplash.com/photo-1631452180519-5b2c7183762b?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('paratha')) return 'https://images.unsplash.com/photo-1600628421060-6390c5d0f83d?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('omelette') || key.includes('egg')) return 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('tea')) return 'https://images.unsplash.com/photo-1505575972945-2804b2b889f8?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('coffee')) return 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+
+                  if (key.includes('thali')) return 'https://images.unsplash.com/photo-1628294895950-9808f9003bb3?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('biryani')) return 'https://images.unsplash.com/photo-1625944529463-3b8e79fba399?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('paneer')) return 'https://images.unsplash.com/photo-1623065429905-30c052d1e7c3?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('dal')) return 'https://images.unsplash.com/photo-1604908176997-43165148f72f?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('rajma')) return 'https://images.unsplash.com/photo-1642407330587-184044c10b6b?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('roti')) return 'https://images.unsplash.com/photo-1625944528857-53ce38afcb0c?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('curd') || key.includes('buttermilk')) return 'https://images.unsplash.com/photo-1591439657848-9f2e0b5c0081?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+
+                  if (key.includes('chapati') || key.includes('sabzi') || key.includes('mix veg')) return 'https://images.unsplash.com/photo-1631452180519-5b2c7183762b?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('chicken curry')) return 'https://images.unsplash.com/photo-1604908554049-20e37f2a4d14?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('pulao')) return 'https://images.unsplash.com/photo-1604908553175-251e7bc04dc3?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('gulab')) return 'https://images.unsplash.com/photo-1625944527866-0c9b8e2d0f75?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+
+                  if (key.includes('truffle') || key.includes('chocolate')) return 'https://images.unsplash.com/photo-1541782814453-a7f992034fec?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('black forest')) return 'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('pineapple')) return 'https://images.unsplash.com/photo-1582650944795-9d36202032b5?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('red velvet')) return 'https://images.unsplash.com/photo-1559622214-3577c7f74de0?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('butterscotch')) return 'https://images.unsplash.com/photo-1625944528628-45a3a9ca520d?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('vanilla')) return 'https://images.unsplash.com/photo-1606313564200-e75dfe2e6d49?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('strawberry')) return 'https://images.unsplash.com/photo-1541782814453-a7f992034fec?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('mango')) return 'https://images.unsplash.com/photo-1581263945610-4b2e3f7b6047?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('walnut')) return 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('lava')) return 'https://images.unsplash.com/photo-1599785209791-3f2a7af38d4e?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('cheese') || key.includes('cheesecake')) return 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('kitkat')) return 'https://images.unsplash.com/photo-1606313564200-e75dfe2e6d49?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('oreo')) return 'https://images.unsplash.com/photo-1606313564200-e75dfe2e6d49?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('tiramisu')) return 'https://images.unsplash.com/photo-1606313564200-e75dfe2e6d49?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('rainbow')) return 'https://images.unsplash.com/photo-1541976076758-347942db1970?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('rasmalai')) return 'https://images.unsplash.com/photo-1625944527866-0c9b8e2d0f75?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                  if (key.includes('ferrero')) return 'https://images.unsplash.com/photo-1523986371872-9d3ba2e2e2e2?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+
+                  // Fallback
+                  return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&amp;auto=format&amp;fit=crop&amp;w=200&amp;h=200';
+                };
+
                 return (
                   <div key={index} className="menu-item">
+                    <div className="menu-item-image">
+                      <img
+                        src={getImageForItem(item.name)}
+                        alt={item.name}
+                        className="food-image"
+                        loading="lazy"
+                      />
+                    </div>
                     <div className="menu-item-info">
                       <h4 className="menu-item-name">{item.name}</h4>
                     </div>
